@@ -1,0 +1,36 @@
+name: Reusable - SAST (SonarCloud)
+
+on:
+  workflow_call:
+    inputs:
+      service-path:
+        description: "Service subdirectory to scope analysis (e.g. services/agent-service)"
+        required: true
+        type: string
+    secrets:
+      SONAR_TOKEN:
+        required: true
+
+jobs:
+  sonar:
+    name: SonarCloud Scan
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@master
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          args: >
+            -Dsonar.organization=infraguid
+            -Dsonar.projectKey=infraGUID_infraguid-microservices
+            -Dsonar.sources=${{ inputs.service-path }}
+            -Dsonar.python.version=3.12
+            -Dsonar.exclusions=**/tests/**,**/__pycache__/**,**/.venv/**

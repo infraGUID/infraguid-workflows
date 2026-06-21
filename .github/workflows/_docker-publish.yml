@@ -17,6 +17,11 @@ on:
         required: false
         default: "."
         type: string
+      push-latest:
+        description: "Also tag and push :latest alongside the versioned tag"
+        required: false
+        type: boolean
+        default: false
     outputs:
       image-uri:
         description: "Full pushed image URI"
@@ -54,3 +59,10 @@ jobs:
           docker push "$URI"
           echo "image-uri=$URI" >> "$GITHUB_OUTPUT"
           echo "Pushed $URI"
+
+          if [ "${{ inputs.push-latest }}" = "true" ]; then
+            LATEST="$REGISTRY/${{ inputs.image-name }}:latest"
+            docker tag "$URI" "$LATEST"
+            docker push "$LATEST"
+            echo "Also pushed $LATEST"
+          fi
