@@ -32,15 +32,28 @@ jobs:
       - name: Install Snyk
         run: npm install -g snyk
 
-      - name: Snyk test
-        id: scan
+      # Informational: full HIGH+ report so the logs surface everything,
+      # including transitive HIGHs that only have major-version fixes.
+      - name: Snyk report (informational)
         continue-on-error: true
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         run: |
           cd "${{ inputs.service-path }}"
-          if snyk test --severity-threshold=high --file=requirements.txt --package-manager=pip; then
+          snyk test --severity-threshold=high --file=requirements.txt --package-manager=pip || true
+
+      # Security gate: fail the job on any CRITICAL dependency vulnerability
+      # (aligned with the Trivy CRITICAL gate). Sets critical-found for callers.
+      - name: Snyk security gate (CRITICAL)
+        id: scan
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        run: |
+          cd "${{ inputs.service-path }}"
+          if snyk test --severity-threshold=critical --file=requirements.txt --package-manager=pip; then
             echo "critical-found=false" >> "$GITHUB_OUTPUT"
           else
             echo "critical-found=true" >> "$GITHUB_OUTPUT"
+            echo "::error::Snyk found CRITICAL dependency vulnerabilities"
+            exit 1
           fi
