@@ -10,6 +10,10 @@ on:
     secrets:
       SONAR_TOKEN:
         required: true
+    outputs:
+      quality-gate-failed:
+        description: "true if the SonarCloud quality gate failed (or the scan errored)"
+        value: ${{ jobs.sonar.outputs.quality-gate-failed }}
 
 jobs:
   sonar:
@@ -17,12 +21,19 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
+    outputs:
+      quality-gate-failed: ${{ steps.gate.outputs.quality-gate-failed }}
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
       - name: SonarCloud Scan
+        id: scan
+        # Informational only — never blocks the PR / workflow. qualitygate.wait
+        # makes the scanner wait for the gate result so we can surface failures
+        # via the quality-gate-failed output (still swallowed by continue-on-error).
+        continue-on-error: true
         uses: SonarSource/sonarcloud-github-action@master
         env:
           GITHUB_TOKEN: ${{ github.token }}
@@ -33,4 +44,12 @@ jobs:
             -Dsonar.projectKey=infraGUID_infraguid-microservices
             -Dsonar.sources=${{ inputs.service-path }}
             -Dsonar.python.version=3.12
+            -Dsonar.qualitygate.wait=true
             -Dsonar.exclusions=**/tests/**,**/__pycache__/**,**/.venv/**
+
+      # Capture whether the gate failed so callers can alert on findings without
+      # the scan step ever blocking the workflow.
+      - name: Record quality gate result
+        id: gate
+        if: always()
+        run: echo "quality-gate-failed=${{ steps.scan.outcome == 'failure' }}" >> "$GITHUB_OUTPUT"

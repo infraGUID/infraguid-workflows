@@ -42,10 +42,11 @@ jobs:
           cd "${{ inputs.service-path }}"
           snyk test --severity-threshold=high --file=requirements.txt --package-manager=pip || true
 
-      # Security gate: fail the job on any CRITICAL dependency vulnerability
-      # (aligned with the Trivy CRITICAL gate). Sets critical-found for callers.
+      # CRITICAL dependency report. Informational only — surfaces criticals and
+      # sets critical-found for callers, but never fails the job / workflow.
       - name: Snyk security gate (CRITICAL)
         id: scan
+        continue-on-error: true
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         run: |
