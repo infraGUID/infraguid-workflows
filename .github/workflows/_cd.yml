@@ -4,7 +4,7 @@ on:
   workflow_call:
     inputs:
       chart:
-        description: "Chart dir under argocd-apps/microservices"
+        description: "Chart dir under argocd-apps/microservices."
         required: true
         type: string
       image-tag:
