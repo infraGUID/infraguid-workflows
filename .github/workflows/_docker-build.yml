@@ -1,4 +1,4 @@
-name: Reusable - Docker Build + Trivy
+﻿name: Reusable - Docker Build + Trivy
 
 on:
   workflow_call:
@@ -27,17 +27,11 @@ jobs:
         run: |
           curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin
 
-      # Informational: full HIGH+CRITICAL report (never fails the build) so the
-      # job logs show everything, including unfixed/no-patch findings.
       - name: Trivy report (informational)
         continue-on-error: true
         run: |
           trivy image --severity HIGH,CRITICAL --no-progress --scanners vuln "${{ inputs.service-name }}:ci"
 
-      # Security gate: FAILS the build on any CRITICAL that has an available fix.
-      # --ignore-unfixed skips upstream OS CVEs with no vendor patch (e.g. Debian
-      # fix_deferred), which are not actionable and would otherwise block forever.
-      # Informational only — reports fixable CRITICALs but never fails the build.
       - name: Trivy security gate (fixable CRITICAL)
         continue-on-error: true
         run: |

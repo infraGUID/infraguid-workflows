@@ -1,7 +1,4 @@
-name: Reusable - PR Validation Comment
-
-# Posts (or updates) a single sticky comment on the PR summarising the validation
-# results for one service. Nothing is published on PRs — this is informational.
+﻿name: Reusable - PR Validation Comment
 
 on:
   workflow_call:

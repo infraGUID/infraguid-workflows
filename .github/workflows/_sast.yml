@@ -1,4 +1,4 @@
-name: Reusable - SAST (SonarCloud)
+﻿name: Reusable - SAST (SonarCloud)
 
 on:
   workflow_call:
@@ -30,9 +30,6 @@ jobs:
 
       - name: SonarCloud Scan
         id: scan
-        # Informational only — never blocks the PR / workflow. qualitygate.wait
-        # makes the scanner wait for the gate result so we can surface failures
-        # via the quality-gate-failed output (still swallowed by continue-on-error).
         continue-on-error: true
         uses: SonarSource/sonarcloud-github-action@master
         env:
@@ -47,8 +44,6 @@ jobs:
             -Dsonar.qualitygate.wait=true
             -Dsonar.exclusions=**/tests/**,**/__pycache__/**,**/.venv/**
 
-      # Capture whether the gate failed so callers can alert on findings without
-      # the scan step ever blocking the workflow.
       - name: Record quality gate result
         id: gate
         if: always()

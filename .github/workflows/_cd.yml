@@ -1,4 +1,4 @@
-name: Reusable - CD (open PR to bump Helm image tag)
+﻿name: Reusable - CD (open PR to bump Helm image tag)
 
 on:
   workflow_call:

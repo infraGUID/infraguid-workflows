@@ -1,9 +1,4 @@
-name: Reusable - Release Version Check
-
-# Guards a release dispatch: the requested version must be valid semver, must be
-# strictly greater than the latest release for this service, and its tag must not
-# already exist. Tags are namespaced per service (<service>-vX.Y.Z) because all
-# services share one repo.
+﻿name: Reusable - Release Version Check
 
 on:
   workflow_call:

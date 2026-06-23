@@ -1,8 +1,4 @@
-name: Reusable - Git Release Tag
-
-# Creates and pushes an annotated release tag (<service>-vX.Y.Z) after a
-# successful image publish. Tags are namespaced per service because all services
-# share one repo. Runs only as part of a release dispatch.
+﻿name: Reusable - Git Release Tag
 
 on:
   workflow_call:

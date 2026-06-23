@@ -1,4 +1,4 @@
-name: Reusable - SCA (Snyk)
+﻿name: Reusable - SCA (Snyk)
 
 on:
   workflow_call:
@@ -32,8 +32,6 @@ jobs:
       - name: Install Snyk
         run: npm install -g snyk
 
-      # Informational: full HIGH+ report so the logs surface everything,
-      # including transitive HIGHs that only have major-version fixes.
       - name: Snyk report (informational)
         continue-on-error: true
         env:
@@ -42,8 +40,6 @@ jobs:
           cd "${{ inputs.service-path }}"
           snyk test --severity-threshold=high --file=requirements.txt --package-manager=pip || true
 
-      # CRITICAL dependency report. Informational only — surfaces criticals and
-      # sets critical-found for callers, but never fails the job / workflow.
       - name: Snyk security gate (CRITICAL)
         id: scan
         continue-on-error: true

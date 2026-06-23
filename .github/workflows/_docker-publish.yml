@@ -1,4 +1,4 @@
-name: Reusable - Docker Publish (ECR)
+﻿name: Reusable - Docker Publish (ECR)
 
 on:
   workflow_call:

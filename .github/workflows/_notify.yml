@@ -1,4 +1,4 @@
-name: _Notify — Email Alert (Brevo)
+﻿name: _Notify — Email Alert (Brevo)
 on:
   workflow_call:
     inputs:
@@ -31,7 +31,6 @@ jobs:
     name: Send Email Alert
     runs-on: ubuntu-latest
     steps:
-      # ─── Download Report Artifact ───
       - name: Download Report Artifact
         if: inputs.artifact-name != ''
         uses: actions/download-artifact@v4
@@ -39,7 +38,6 @@ jobs:
           name: ${{ inputs.artifact-name }}
           path: ./report
 
-      # ─── Send Email Without Attachment ───
       - name: Send Email (No Attachment)
         if: inputs.artifact-name == ''
         run: |
@@ -58,7 +56,6 @@ jobs:
           BREVO_API_KEY: ${{ secrets.BREVO_API_KEY }}
           NOTIFY_EMAIL: ${{ secrets.NOTIFY_EMAIL }}
 
-      # ─── Send Email With Attachment ───
       - name: Send Email (With Attachment)
         if: inputs.artifact-name != ''
         run: |
